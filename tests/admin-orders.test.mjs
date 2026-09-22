@@ -2,6 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { orders, filterOrders, orderMetrics, weeklyActivity, localOrderTime } from '../dist/admin-data.js';
 
+test('admin order references use the storefront format and encode the purchase timestamp', () => {
+  for (const order of orders) {
+    assert.match(order.id, /^OM-[A-Z0-9]+-[A-Z0-9]{4}$/);
+    assert.equal(parseInt(order.id.split('-')[1], 36), Date.parse(order.placedAt));
+    assert.deepEqual(filterOrders(orders, { search: order.id }), [order]);
+  }
+});
+
 test('sixteen orders cover three months with valid product prices and fixed shipping', () => {
   assert.equal(orders.length, 16);
   assert.equal(new Set(orders.map(order => order.id)).size, 16);

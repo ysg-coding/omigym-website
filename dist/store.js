@@ -1,4 +1,5 @@
 import { productById } from './data.js';
+import { createOrderReference } from './order-reference.js';
 
 export const MAX_QUANTITY = 20;
 export function lineInfo(id, variant) {
@@ -38,5 +39,6 @@ export function totals(cart) {
 export function createOrder(cart, customer) {
   const items = sanitizeCart(cart);
   if (!items.length) throw new Error('Your bag is empty. Add some equipment before placing an order.');
-  return { id: `OM-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`, date: new Date().toISOString(), customer: String(customer).trim().slice(0, 80), items, ...totals(items) };
+  const timestamp = Date.now();
+  return { id: createOrderReference(timestamp), date: new Date(timestamp).toISOString(), customer: String(customer).trim().slice(0, 80), items, ...totals(items) };
 }

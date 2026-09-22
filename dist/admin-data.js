@@ -1,33 +1,34 @@
 import { productById } from './data.js';
+import { createOrderReference } from './order-reference.js';
 
 // Fictional fixtures only. ISO offsets and IANA zones preserve the customer's local purchase time.
 const records = [
-  ['1041', '2026-07-02T19:42:00-05:00', 'America/Chicago', 'Olivia Bennett', 'olivia.bennett@example.com', '4821 Juniper Hollow Dr', 'Austin', 'TX', '78745', 'Delivered', [['round-dumbbells', 1, 1]]],
-  ['1042', '2026-07-08T12:18:00-07:00', 'America/Los_Angeles', 'Noah Sullivan', 'noah.sullivan@example.com', '736 Alder Grove Ave', 'Portland', 'OR', '97214', 'Delivered', [['adjustable-bench', 0, 1]]],
-  ['1043', '2026-07-17T20:36:00-04:00', 'America/New_York', 'Mia Reynolds', 'mia.reynolds@example.com', '218 Meadowlark Way', 'Charlotte', 'NC', '28205', 'Delivered', [['starter-package', 0, 1]]],
-  ['1044', '2026-07-18T10:24:00-06:00', 'America/Denver', 'Ethan Brooks', 'ethan.brooks@example.com', '905 Aspen Ridge Ln', 'Denver', 'CO', '80211', 'Delivered', [['olympic-plates', 1, 1], ['round-dumbbells', 2, 1]]],
-  ['1045', '2026-07-28T18:57:00-07:00', 'America/Los_Angeles', 'Sophia Mitchell', 'sophia.mitchell@example.com', '1642 Willow Terrace', 'San Diego', 'CA', '92104', 'Delivered', [['dumbbell-set', 0, 1]]],
-  ['1046', '2026-08-04T21:13:00-04:00', 'America/New_York', 'Lucas Hayes', 'lucas.hayes@example.com', '357 Briarstone Rd', 'Raleigh', 'NC', '27609', 'Delivered', [['power-rack', 0, 1], ['olympic-plates', 2, 1]]],
-  ['1047', '2026-08-10T12:46:00-05:00', 'America/Chicago', 'Amelia Parker', 'amelia.parker@example.com', '621 Cottonwood Ct', 'Nashville', 'TN', '37206', 'Delivered', [['round-dumbbells', 0, 1]]],
-  ['1048', '2026-08-11T19:08:00-04:00', 'America/New_York', 'James Cooper', 'james.cooper@example.com', '148 Maple Crest St', 'Columbus', 'OH', '43202', 'Delivered', [['adjustable-bench', 0, 1], ['round-dumbbells', 1, 1]]],
-  ['1049', '2026-08-12T20:41:00-07:00', 'America/Los_Angeles', 'Isabella Morgan', 'isabella.morgan@example.com', '2846 Cedarbrook Ave', 'Seattle', 'WA', '98103', 'Delivered', [['starter-package', 0, 1]]],
-  ['1050', '2026-08-23T11:32:00-05:00', 'America/Chicago', 'Benjamin Reed', 'benjamin.reed@example.com', '793 Oakfield Dr', 'Minneapolis', 'MN', '55406', 'Delivered', [['olympic-plates', 0, 2]]],
-  ['1051', '2026-08-29T16:19:00-07:00', 'America/Phoenix', 'Charlotte Foster', 'charlotte.foster@example.com', '5128 Desert Finch Ln', 'Phoenix', 'AZ', '85016', 'Delivered', [['dumbbell-set', 0, 1]]],
-  ['1052', '2026-09-03T18:24:00-04:00', 'America/New_York', 'Henry Collins', 'henry.collins@example.com', '439 Brookside Terrace', 'Atlanta', 'GA', '30316', 'Delivered', [['power-rack', 0, 1]]],
-  ['1053', '2026-09-09T20:16:00-05:00', 'America/Chicago', 'Ava Lawson', 'ava.lawson@example.com', '1865 Prairie View Dr', 'Dallas', 'TX', '75206', 'Shipped', [['starter-package', 0, 1], ['olympic-plates', 0, 1]]],
-  ['1054', '2026-09-15T12:39:00-07:00', 'America/Los_Angeles', 'William Ellis', 'william.ellis@example.com', '927 Laurel Point Ave', 'Sacramento', 'CA', '95818', 'Shipped', [['round-dumbbells', 2, 1]]],
-  ['1055', '2026-09-20T19:52:00-06:00', 'America/Denver', 'Grace Anderson', 'grace.anderson@example.com', '304 Silver Birch Way', 'Salt Lake City', 'UT', '84105', 'Processing', [['adjustable-bench', 0, 1]]],
-  ['1056', '2026-09-21T21:07:00-04:00', 'America/New_York', 'Emily Carter', 'emily.carter@example.com', '862 Harbor Elm St', 'Boston', 'MA', '02130', 'Processing', [['dumbbell-set', 0, 1], ['olympic-plates', 0, 1]]],
+  ['K7Q2', '2026-07-02T19:42:18-05:00', 'America/Chicago', 'Rachel Bennett', 'rachel.bennett84@gmail.com', '4816 S 3rd St', 'Austin', 'TX', '78745', 'Delivered', [['round-dumbbells', 1, 1]]],
+  ['3MXR', '2026-07-08T12:18:43-07:00', 'America/Los_Angeles', 'Daniel Nguyen', 'dnguyen.pdx@outlook.com', '2738 SE Taylor St, Apt 4', 'Portland', 'OR', '97214', 'Delivered', [['adjustable-bench', 0, 1]]],
+  ['H9V4', '2026-07-17T20:36:07-04:00', 'America/New_York', 'Melissa Reynolds', 'mel.reynolds27@yahoo.com', '1824 Chatham Ave', 'Charlotte', 'NC', '28205', 'Delivered', [['starter-package', 0, 1]]],
+  ['6BTF', '2026-07-18T10:24:52-06:00', 'America/Denver', 'Andrew Brooks', 'andrewb.denver@gmail.com', '3547 W 35th Ave', 'Denver', 'CO', '80211', 'Delivered', [['olympic-plates', 1, 1], ['round-dumbbells', 2, 1]]],
+  ['RW8N', '2026-07-28T18:57:26-07:00', 'America/Los_Angeles', 'Sofia Ramirez', 'sofiar_92@icloud.com', '4216 Illinois St, Unit 6', 'San Diego', 'CA', '92104', 'Delivered', [['dumbbell-set', 0, 1]]],
+  ['2JC5', '2026-08-04T21:13:39-04:00', 'America/New_York', 'Michael Hayes', 'mhayes.raleigh@gmail.com', '5817 Cedarwood Dr', 'Raleigh', 'NC', '27609', 'Delivered', [['power-rack', 0, 1], ['olympic-plates', 2, 1]]],
+  ['P4ZA', '2026-08-10T12:46:11-05:00', 'America/Chicago', 'Ashley Parker', 'ashley.parker615@hotmail.com', '1423 Eastland Ave, Apt B', 'Nashville', 'TN', '37206', 'Delivered', [['round-dumbbells', 0, 1]]],
+  ['7DLY', '2026-08-11T19:08:34-04:00', 'America/New_York', 'James Cooper', 'jcooper.oh@gmail.com', '2638 N 4th St', 'Columbus', 'OH', '43202', 'Delivered', [['adjustable-bench', 0, 1], ['round-dumbbells', 1, 1]]],
+  ['Q8F3', '2026-08-12T20:41:56-07:00', 'America/Los_Angeles', 'Jennifer Kim', 'jenn.kim86@outlook.com', '4827 Interlake Ave N', 'Seattle', 'WA', '98103', 'Delivered', [['starter-package', 0, 1]]],
+  ['V2EK', '2026-08-23T11:32:09-05:00', 'America/Chicago', 'Benjamin Olson', 'ben.olson.mn@gmail.com', '3624 38th Ave S', 'Minneapolis', 'MN', '55406', 'Delivered', [['olympic-plates', 0, 2]]],
+  ['5GWN', '2026-08-29T16:19:47-07:00', 'America/Phoenix', 'Christina Foster', 'cfoster.az@yahoo.com', '2631 E Campbell Ave, Unit 12', 'Phoenix', 'AZ', '85016', 'Delivered', [['dumbbell-set', 0, 1]]],
+  ['N6S9', '2026-09-03T18:24:22-04:00', 'America/New_York', 'Marcus Collins', 'marcus.collins81@gmail.com', '1426 Glenwood Ave SE', 'Atlanta', 'GA', '30316', 'Delivered', [['power-rack', 0, 1]]],
+  ['4YHB', '2026-09-09T20:16:51-05:00', 'America/Chicago', 'Priya Shah', 'priya.s.dallas@outlook.com', '5813 Richmond Ave', 'Dallas', 'TX', '75206', 'Shipped', [['starter-package', 0, 1], ['olympic-plates', 0, 1]]],
+  ['C3U7', '2026-09-15T12:39:16-07:00', 'America/Los_Angeles', 'William Ellis', 'will.ellis916@gmail.com', '2735 6th Ave', 'Sacramento', 'CA', '95818', 'Shipped', [['round-dumbbells', 2, 1]]],
+  ['9AKM', '2026-09-20T19:52:38-06:00', 'America/Denver', 'Rebecca Anderson', 'becca.anderson@icloud.com', '1648 S 1100 E', 'Salt Lake City', 'UT', '84105', 'Processing', [['adjustable-bench', 0, 1]]],
+  ['T6R2', '2026-09-21T21:07:24-04:00', 'America/New_York', 'Emily Carter', 'emily.carter89@gmail.com', '38 Boynton St, Apt 2', 'Boston', 'MA', '02130', 'Processing', [['dumbbell-set', 0, 1], ['olympic-plates', 0, 1]]],
 ];
 
-export const orders = records.map(([number, placedAt, timeZone, customer, email, street, city, state, zip, status, lines]) => {
+export const orders = records.map(([suffix, placedAt, timeZone, customer, email, street, city, state, zip, status, lines]) => {
   const items = lines.map(([id, variantIndex, quantity]) => {
     const product = productById(id);
     const variant = product.variants[variantIndex];
     return { id, name: product.name, image: product.image, variant: variant.name, unitPrice: variant.price, quantity };
   });
   const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
-  return { id: `OM-${number}`, placedAt, timeZone, customer, email, street, city, state, zip, country: 'United States', status, items, subtotal, shipping: 700, total: subtotal + 700 };
+  return { id: createOrderReference(Date.parse(placedAt), suffix), placedAt, timeZone, customer, email, street, city, state, zip, country: 'United States', status, items, subtotal, shipping: 700, total: subtotal + 700 };
 });
 
 export function localOrderTime(order) {

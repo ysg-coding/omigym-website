@@ -36,7 +36,8 @@ test('orders snapshot cart and cannot be created empty', () => {
   assert.throws(() => createOrder([], 'Avery'));
   const cart = addItem([], 'round-dumbbells', '7.5 kg pair', 1);
   const order = createOrder(cart, 'Avery');
-  assert.match(order.id, /^OM-/);
+  assert.match(order.id, /^OM-[A-Z0-9]+-[A-Z0-9]{4}$/);
+  assert.equal(parseInt(order.id.split('-')[1], 36), Date.parse(order.date));
   assert.equal(order.total, 9600);
   cart[0].quantity = 10;
   assert.equal(order.items[0].quantity, 1);
