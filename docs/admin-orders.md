@@ -1,10 +1,10 @@
 # Order administration page
 
-Branch: `feature/admin-orders`. URL: `/admin.html`.
+Branch: `admin`. URL: `/admin.html`.
 
 Build a separate static administration surface using a navy sidebar, pale slate workspace and teal accents. Keep all storefront assets and routes intact. Reuse the six existing product records and their pictures, with $7 shipping per order.
 
-Provide 16 entirely fictional US orders for July–September 2026, distributed 5 / 6 / 5 by month. Use varied dates, a quiet week and a small mid-August peak. Local timestamps favor lunch breaks and evenings, with a few weekend late-morning/afternoon purchases. This is an illustrative distribution, not an empirical claim about US shopping behavior. Customer profiles use varied names, plausible email handles at common providers, and US street/address formats including apartment and unit numbers. These are invented combinations, not verified people, inboxes or delivery locations. Render times using each customer's named US time zone so browser location cannot shift them.
+Provide 16 simulated US orders for July–September 2026, distributed 5 / 6 / 5 by month. Use varied dates, a quiet week and a small mid-August peak. Local timestamps favor lunch breaks and evenings, with a few weekend late-morning/afternoon purchases. This is an illustrative distribution, not an empirical claim about US shopping behavior. Customer profiles use fictional names and plausible email handles at common providers. Delivery addresses are public gym business addresses checked against official listings; see [address sources](admin-address-sources.md). The simulated customers and transactions have no real association with these businesses. Render times using each customer's named US time zone so browser location cannot shift them.
 
 Order references share `dist/order-reference.js` with checkout: `OM-<uppercase base-36 Unix milliseconds>-<four-character suffix>`. Historical references encode each order's purchase timestamp and have fixed suffixes so reloads never change them. Checkout generates a random suffix and uses the same timestamp for the reference and order date.
 
