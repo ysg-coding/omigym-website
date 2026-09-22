@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#122b35">
+  <title>Orders · OMIGYM Admin</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23122b35'/%3E%3Cpath d='M9 9h14v14H9z' fill='none' stroke='%2373d6c0' stroke-width='4'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="admin.css">
+  <script type="module" src="admin.js"></script>
+</head>
+<body>
+  <a class="skip" href="#workspace">Skip to orders</a>
+  <aside class="sidebar" aria-label="Workspace sidebar">
+    <a class="admin-brand" href="admin.html"><span class="brand-symbol" aria-hidden="true">o</span><span>omigym<span class="brand-label">ADMIN WORKSPACE</span></span></a>
+    <div class="store-switch"><span class="store-icon" aria-hidden="true">O</span><span><strong>OMIGYM Store</strong><small>United States · USD</small></span></div>
+    <span class="nav-label">WORKSPACE</span>
+    <nav aria-label="Administration"><a href="#overview" data-section="overview"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Overview</a><a class="active" href="#orders" data-section="orders" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 8-4 8 4v11l-8 4-8-4V7Zm0 0 8 4 8-4M12 11v11M8 5l8 4"/></svg>Orders<span class="nav-count">16</span></a></nav>
+    <div class="sidebar-bottom"><a class="storefront-link" href="index.html#/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7M21 3 10 14M10 3H3v18h18v-7"/></svg>View storefront<span>↗</span></a><div class="workspace-user"><span class="avatar">OM</span><div><strong>Store administrator</strong><small>OMIGYM workspace</small></div></div></div>
+  </aside>
+  <div class="admin-main">
+    <header class="topbar"><div><span class="breadcrumb-label">Workspace</span><span class="breadcrumb-divider">/</span><strong>Orders</strong></div><div class="topbar-right"><span class="store-status"><i></i> Store overview</span><span class="topbar-avatar" aria-label="OMIGYM administrator">OM</span></div></header>
+    <main id="workspace" tabindex="-1">
+      <section class="page-heading" id="overview"><div><div class="overline">STORE OPERATIONS</div><h1>Orders</h1><p>The latest orders. Every detail, in one place.</p></div><div class="period-chip"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 11h18"/></svg>Jul 1 – Sep 22, 2026</div></section>
+      <section class="metrics" id="metrics" aria-label="Order overview"></section>
+      <section class="activity-panel" aria-labelledby="activity-title"><div class="activity-copy"><span class="overline">THE PAST THREE MONTHS</span><h2 id="activity-title">A steady rhythm.</h2><p>Weekly order volume</p><div class="activity-total"><strong>16</strong><span>orders across<br>July – September</span></div></div><div class="chart-wrap"><div class="chart-legend"><span><i></i> Orders</span><span id="peak-label"></span></div><div id="activity-chart"></div><div class="chart-months"><span>JULY</span><span>AUGUST</span><span>SEPTEMBER</span></div></div></section>
+      <section class="orders-panel" id="orders" aria-labelledby="orders-heading"><div class="panel-heading"><div><h2 id="orders-heading">All orders <span>16</span></h2><p>A closer look at what’s moving.</p></div><span class="currency-label">All amounts in USD</span></div><div class="status-tabs" role="group" aria-label="Filter by fulfillment status" id="status-tabs"></div><div class="table-toolbar"><label class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 5 5"/></svg><input id="order-search" type="search" placeholder="Search order, customer, product or city…" aria-label="Search orders" maxlength="100"><span class="search-hint" aria-hidden="true">⌕</span></label><label class="select-field"><span>Month</span><select id="month-filter" aria-label="Filter by month"><option value="all">All months</option><option value="2026-09">September</option><option value="2026-08">August</option><option value="2026-07">July</option></select></label><label class="select-field"><span>Sort</span><select id="order-sort" aria-label="Sort orders"><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label></div>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Orders table, scroll horizontally on small screens"><table><thead><tr><th scope="col">Order</th><th scope="col">Product</th><th scope="col">Customer</th><th scope="col">Amount</th><th scope="col">Placed on</th><th scope="col">Delivery address</th><th scope="col">Status</th><th scope="col"><span class="sr-only">Details</span></th></tr></thead><tbody id="order-rows"></tbody></table></div><div id="empty-orders" class="empty-orders" hidden><span aria-hidden="true">⌕</span><h3>No orders found</h3><p>Try another name, product or order number.</p><button type="button" id="reset-filters">Clear filters</button></div><div class="table-footer"><span id="result-label" role="status" aria-live="polite"></span><nav aria-label="Order pagination" id="pagination"></nav></div></section>
+      <footer class="workspace-footer"><span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Order times are shown in each customer’s local time.</span><span>OMIGYM · Order management</span></footer>
+    </main>
+  </div>
+  <dialog id="order-dialog" aria-labelledby="detail-title"><div id="order-detail"></div></dialog>
+  <noscript><p class="no-js">Enable JavaScript to view the order list.</p></noscript>
+</body>
+</html>
