@@ -1,0 +1,28 @@
+{
+  "mode": "built-in image_gen",
+  "prompts": [
+    {
+      "name": "hero",
+      "prompt": "Use case: ads-marketing. Asset type: wide 16:9 website hero background for premium gym equipment brand. Photoreal cinematic premium industrial home gym with concrete walls and high windows, black steel full power rack on the RIGHT with flat bench, barbell, and weight plates. Warm morning light falls from the right-side windows. Keep the LEFT half dark, empty, visually quiet and usable for future white headline overlay; do not add headline. Dramatic realistic architecture and material texture, quality editorial architectural photography. No people, absolutely NO text, logos, brand names, labels, letters or watermarks anywhere."
+    },
+    {
+      "name": "dumbbells",
+      "prompt": "Use case: product-mockup. Asset type: square premium ecommerce catalog photograph. Reference image is shape and design reference for black round urethane dumbbells, NOT the final composition. Create a studio product shot of exactly one PAIR of matching black round urethane dumbbells with chrome knurled handles. Follow the rounded circular endcaps and subtle inset shape details in reference. On each visible circular endcap use small orange lettering 'OMIGYM' above larger orange '7.5' faithfully and legibly. Position dumbbells lying naturally at 3/4 angle, one slightly behind the other, isolated on very light cool gray seamless floor/background with subtle soft realistic contact shadows. Full products visible, centered with comfortable margins. Crisp realistic premium ecommerce photography. No extra objects, no other text or brands.",
+      "referenced_image_paths": [
+        "D:/CodeDocs/omigym/20260922-111452.png"
+      ]
+    },
+    {
+      "name": "bench",
+      "prompt": "Use case: product-mockup. Asset type: square ecommerce catalog photograph. Isolated matte black adjustable gym bench with black padded backrest raised to a moderate incline, black padded seat, strong black steel frame, subtle small orange adjustment knob. Centered full product at 3/4 angle with generous margins on very light cool gray seamless background and floor, soft studio lighting and delicate realistic contact shadow. Crisp high-quality realistic ecommerce photography and premium materials. NO text, labels, logos, lettering, brands, watermarks or extra objects."
+    },
+    {
+      "name": "rack",
+      "prompt": "Use case: product-mockup. Asset type: square ecommerce catalog photograph. Isolated black full steel power rack with four upright posts, pullup bar, safety bars, and a chrome barbell across the J cups, tiny orange adjustment accents. Entire rack visible from floor to top in elegant 3/4 angle, centered with generous margins, very light cool gray seamless studio background and floor, realistic soft contact shadows. Crisp high-quality realistic premium ecommerce photography, correct strong construction. No people, NO text, labels, logos, lettering, brands or watermarks. No room architecture."
+    },
+    {
+      "name": "plates",
+      "prompt": "Use case: product-mockup. Asset type: square ecommerce catalog photograph. Product photo of a small group of three black Olympic weight plates of different diameters leaning naturally together in an elegant arrangement, clean steel center rings, rich subtly textured black rubber. Centered with generous margins on very light cool gray seamless studio background and floor, soft diffused studio lighting and delicate realistic contact shadows. Crisp high-quality realistic premium ecommerce photography. NO text, numerals, labels, logos, lettering, brands, watermarks or extra objects."
+    }
+  ]
+}

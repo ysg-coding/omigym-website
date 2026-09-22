@@ -1,0 +1,12 @@
+# Local dependencies, credentials and runtime files
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+.sites-runtime/
+.DS_Store
+Thumbs.db
+
+# Generated originals duplicate the website assets in dist/assets/
+output/brand-images/*.png
