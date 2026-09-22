@@ -22,7 +22,7 @@ const records = [
   ['T6R2', '2026-09-21T21:07:24-04:00', 'America/New_York', 'Emily Carter', 'emily.carter89@gmail.com', '3525 Washington Street', 'Boston', 'MA', '02130', 'Processing', [['dumbbell-set', 0, 1], ['olympic-plates', 0, 1]]],
 ];
 
-export const orders = records.map(([suffix, placedAt, timeZone, customer, email, street, city, state, zip, status, lines]) => {
+const originalOrders = records.map(([suffix, placedAt, timeZone, customer, email, street, city, state, zip, status, lines]) => {
   const items = lines.map(([id, variantIndex, quantity]) => {
     const product = productById(id);
     const variant = product.variants[variantIndex];
@@ -31,6 +31,90 @@ export const orders = records.map(([suffix, placedAt, timeZone, customer, email,
   const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
   return { id: createOrderReference(Date.parse(placedAt), suffix), placedAt, timeZone, customer, email, street, city, state, zip, country: 'United States', status, items, subtotal, shipping: 700, total: subtotal + 700 };
 });
+
+export const reportingPeriod = { start: '2026-06-25', end: '2026-09-22', days: 90 };
+const dayMs = 86400000;
+const firstNames = 'Alex Brandon Catherine David Erica Frank Gabrielle Hannah Isaac Jessica Kevin Lauren Matthew Natalie Oscar Patricia Quentin Robert Stephanie Thomas Vanessa Wesley Yvonne Zachary'.split(' ');
+const lastNames = 'Adams Baker Chen Davis Edwards Flores Garcia Harris Irving Johnson Khan Lewis Martinez Nelson Ortiz Patel Quinn Robinson Scott Turner Underwood Walker Young Zhang'.split(' ');
+
+// A fixed seed makes this a reproducible local dataset, never a live sales feed.
+export function generateOrders(seed = 20260922) {
+  let randomState = seed >>> 0;
+  const random = () => ((randomState = (Math.imul(randomState, 1664525) + 1013904223) >>> 0) / 4294967296);
+  const integer = (min, max) => min + Math.floor(random() * (max - min + 1));
+  const pick = values => values[integer(0, values.length - 1)];
+  const weighted = (values, weights) => {
+    let draw = random() * weights.reduce((sum, weight) => sum + weight, 0);
+    return values.find((_, index) => (draw -= weights[index]) < 0) ?? values.at(-1);
+  };
+  const history = new Map();
+  const result = [];
+  let customerIndex = 0;
+  const newCustomer = () => {
+    const index = customerIndex++;
+    const first = firstNames[index % firstNames.length];
+    const last = lastNames[(Math.floor(index / firstNames.length) + (index % firstNames.length) * 7) % lastNames.length];
+    const location = pick(originalOrders);
+    const handle = pick([`${first}.${last}${integer(70, 99)}`, `${first[0]}${last}.${index + 12}`, `${first.toLowerCase()}_${last.toLowerCase()}${index + 3}`]).toLowerCase();
+    return { customer: `${first} ${last}`, email: `${handle}@${pick(['gmail.com', 'gmail.com', 'outlook.com', 'yahoo.com', 'icloud.com', 'hotmail.com'])}`, street: location.street, city: location.city, state: location.state, zip: location.zip, timeZone: location.timeZone, offset: location.placedAt.slice(-6) };
+  };
+  const item = (id, variantIndex, quantity = 1) => {
+    const product = productById(id);
+    const variant = product.variants[variantIndex];
+    return { id, name: product.name, image: product.image, variant: variant.name, unitPrice: variant.price, quantity };
+  };
+  const shoppingBag = previous => {
+    const id = previous
+      ? weighted(['round-dumbbells', 'olympic-plates'], [55, 45])
+      : weighted(['round-dumbbells', 'olympic-plates', 'adjustable-bench', 'dumbbell-set', 'starter-package', 'power-rack'], [34, 23, 17, 12, 10, 4]);
+    const priorWeight = previous?.items.find(line => line.id === id);
+    const variantIndex = priorWeight
+      ? Math.min(2, productById(id).variants.findIndex(v => v.name === priorWeight.variant) + 1)
+      : productById(id).variants.length > 1 ? weighted([0, 1, 2], previous ? [10, 35, 55] : [35, 45, 20]) : 0;
+    const items = [item(id, variantIndex, id === 'olympic-plates' && random() < 0.25 ? integer(2, 3) : 1)];
+    if (id === 'power-rack' && random() < 0.8) items.push(item('olympic-plates', integer(0, 2)));
+    if (id === 'adjustable-bench' && random() < 0.4) items.push(item('round-dumbbells', integer(0, 2)));
+    return items;
+  };
+  for (let day = 0; day < reportingPeriod.days; day++) {
+    const date = new Date(Date.parse(reportingPeriod.start) + day * dayMs);
+    const dateText = date.toISOString().slice(0, 10);
+    const weekday = date.getUTCDay();
+    const weekend = weekday === 0 || weekday === 6;
+    const monthEdge = date.getUTCDate() <= 3 || date.getUTCDate() >= 28;
+    const lift = (weekend ? 1.6 : weekday === 2 || weekday === 3 ? -0.5 : 0) + (monthEdge ? 1.2 : 0) + Math.sin(day / 8) * 0.6;
+    const count = weighted([3, 4, 5, 6], [25 - lift * 6, 32 - lift * 3, 27 + lift * 3, 16 + lift * 6]);
+    const daily = originalOrders.filter(order => order.placedAt.startsWith(dateText)).map(order => ({ ...order }));
+    for (const order of daily) history.set(order.email, { profile: { ...order, offset: order.placedAt.slice(-6) }, day, order });
+    while (daily.length < count) {
+      const returning = [...history.values()].filter(entry => day - entry.day >= 14);
+      const prior = returning.length && random() < 0.32 ? pick(returning) : null;
+      const customer = prior ? prior.profile : newCustomer();
+      const band = weighted(weekend ? [[9, 12], [13, 17], [18, 22]] : [[7, 10], [11, 13], [14, 17], [18, 22]], weekend ? [30, 25, 45] : [7, 23, 12, 58]);
+      const time = [integer(...band), integer(0, 59), integer(0, 59)].map(value => String(value).padStart(2, '0')).join(':');
+      const placedAt = `${dateText}T${time}${customer.offset}`;
+      const items = shoppingBag(prior?.order);
+      const subtotal = items.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
+      const { offset, ...profile } = customer;
+      const order = { ...profile, id: createOrderReference(Date.parse(placedAt), integer(0, 36 ** 4 - 1).toString(36).padStart(4, '0')), placedAt, country: 'United States', items, subtotal, shipping: 700, total: subtotal + 700 };
+      daily.push(order);
+      history.set(customer.email, { profile: customer, day, order });
+    }
+    for (const order of daily) {
+      const age = reportingPeriod.days - 1 - day;
+      order.status = age <= 1 || (age === 2 && random() < 0.35) ? 'Processing' : age <= 6 ? 'Shipped' : 'Delivered';
+    }
+    result.push(...daily);
+  }
+  return result.sort((a, b) => Date.parse(a.placedAt) - Date.parse(b.placedAt));
+}
+
+export const orders = generateOrders();
+
+export function pageNumbers(page, count) {
+  const pages = [...new Set([1, count, page - 1, page, page + 1])].filter(value => value >= 1 && value <= count).sort((a, b) => a - b);
+  return pages.flatMap((value, index) => index && value - pages[index - 1] > 1 ? ['…', value] : [value]);
+}
 
 export function localOrderTime(order) {
   return new Intl.DateTimeFormat('en-US', { timeZone: order.timeZone, hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' }).format(new Date(order.placedAt));
@@ -48,9 +132,11 @@ export function orderMetrics(source) {
   return { count: source.length, revenue, average: source.length ? Math.round(revenue / source.length) : 0, processing: source.filter(order => order.status === 'Processing').length, delivered: source.filter(order => order.status === 'Delivered').length };
 }
 export function weeklyActivity(source) {
-  const start = Date.parse('2026-06-29T00:00:00Z');
+  const firstDay = new Date(reportingPeriod.start);
+  const start = firstDay.getTime() - ((firstDay.getUTCDay() + 6) % 7) * dayMs;
   const weekMs = 7 * 86400000;
-  return Array.from({ length: 13 }, (_, index) => {
+  const weekCount = Math.floor((Date.parse(reportingPeriod.end) - start) / weekMs) + 1;
+  return Array.from({ length: weekCount }, (_, index) => {
     const date = new Date(start + index * weekMs);
     const count = source.filter(order => Math.floor((Date.parse(order.placedAt.slice(0, 10) + 'T00:00:00Z') - start) / weekMs) === index).length;
     return { label: new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', month: 'short', day: 'numeric' }).format(date), count };

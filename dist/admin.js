@@ -1,4 +1,4 @@
-import { orders, filterOrders, orderMetrics, weeklyActivity, localOrderTime, localOrderDate } from './admin-data.js';
+import { orders, reportingPeriod, pageNumbers, filterOrders, orderMetrics, weeklyActivity, localOrderTime, localOrderDate } from './admin-data.js';
 import { money, escapeHTML as esc } from './data.js';
 
 const state = { search: '', month: 'all', status: 'All', sort: 'newest', page: 1 };
@@ -19,17 +19,28 @@ const initials = name => name.split(' ').map(part => part[0]).join('');
 
 function renderOverview() {
   const metrics = orderMetrics(orders);
+  const monthKeys = [...new Set(orders.map(order => order.placedAt.slice(0, 7)))].sort();
+  document.querySelector('#month-filter').innerHTML = '<option value="all">All months</option>' + monthKeys.toReversed().map(month => `<option value="${month}">${new Intl.DateTimeFormat('en-US', { month: 'long', timeZone: 'UTC' }).format(new Date(month + '-01'))}</option>`).join('');
+  document.querySelector('.nav-count').textContent = metrics.count;
+  document.querySelector('#orders-heading span').textContent = metrics.count;
+  document.querySelector('.activity-total strong').textContent = metrics.count;
+  document.querySelector('.activity-total>span').innerHTML = `orders across<br>${reportingPeriod.days} days`;
+  const shortDate = value => new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(value));
+  document.querySelector('#reporting-period').textContent = `${shortDate(reportingPeriod.start)} – ${shortDate(reportingPeriod.end)}, 2026`;
+  const shipped = orders.filter(order => order.status === 'Shipped').length;
   const cards = [
-    { title: 'Total orders', value: metrics.count, icon: 'box', note: '5 in July · 6 in August · 5 in September', accent: '' },
+    { title: 'Total orders', value: metrics.count, icon: 'box', note: `${reportingPeriod.days} days · ${(metrics.count / reportingPeriod.days).toFixed(1)} orders per day`, accent: '' },
     { title: 'Order value', value: money(metrics.revenue), icon: 'value', note: 'Includes $7 shipping per order', accent: '' },
-    { title: 'Avg. order value', value: money(metrics.average), icon: 'average', note: 'Across all 16 orders', accent: '' },
-    { title: 'To fulfill', value: String(metrics.processing).padStart(2, '0'), icon: 'clock', note: `${metrics.delivered} delivered · 2 on the way`, accent: 'pending-metric' },
+    { title: 'Avg. order value', value: money(metrics.average), icon: 'average', note: `Across all ${metrics.count} orders`, accent: '' },
+    { title: 'To fulfill', value: String(metrics.processing).padStart(2, '0'), icon: 'clock', note: `${metrics.delivered} delivered · ${shipped} on the way`, accent: 'pending-metric' },
   ];
   document.querySelector('#metrics').innerHTML = cards.map(card => `<article class="metric ${card.accent}"><div class="metric-label"><h2>${card.title}</h2><span>${icon(card.icon)}</span></div><strong>${card.value}</strong><p>${card.note}</p></article>`).join('');
   const weeks = weeklyActivity(orders);
   const peak = Math.max(...weeks.map(week => week.count));
+  const ceiling = Math.max(4, Math.ceil(peak / 4) * 4);
+  const slot = 608 / weeks.length;
   document.querySelector('#peak-label').textContent = `Peak week · ${peak} orders`;
-  document.querySelector('#activity-chart').innerHTML = `<svg viewBox="0 0 650 110" role="img" aria-labelledby="chart-title chart-desc"><title id="chart-title">Weekly orders from July to September 2026</title><desc id="chart-desc">${weeks.map(week => `Week of ${week.label}: ${week.count} orders`).join('; ')}</desc>${[0, 1, 2, 3].map(level => `<line x1="24" y1="${99 - level * 26}" x2="645" y2="${99 - level * 26}" stroke="#e9eef1" stroke-dasharray="3 4"/><text x="5" y="${103 - level * 26}" fill="#81929f" font-size="10">${level}</text>`).join('')}${weeks.map((week, index) => `<g><title>Week of ${week.label}: ${week.count} orders</title><rect x="${38 + index * 47}" y="${99 - week.count * 26}" width="25" height="${week.count * 26}" rx="4" fill="${week.count === peak ? '#258e81' : index === weeks.length - 1 ? '#314e60' : '#a4d8ce'}"/><text x="${50.5 + index * 47}" y="${91 - week.count * 26}" text-anchor="middle" fill="#617583" font-size="10">${week.count}</text></g>`).join('')}</svg>`;
+  document.querySelector('#activity-chart').innerHTML = `<svg viewBox="0 0 650 130" role="img" aria-labelledby="chart-title chart-desc"><title id="chart-title">Weekly orders, June 25 to September 22, 2026</title><desc id="chart-desc">${weeks.map(week => `Week of ${week.label}: ${week.count} orders`).join('; ')}. First and last weeks are partial.</desc>${[0, 1, 2, 3, 4].map(level => `<line x1="28" y1="${101 - level * 21}" x2="645" y2="${101 - level * 21}" stroke="#e9eef1" stroke-dasharray="3 4"/><text x="2" y="${105 - level * 21}" fill="#637681" font-size="10">${level * ceiling / 4}</text>`).join('')}${weeks.map((week, index) => { const height = week.count / ceiling * 84; const x = 32 + index * slot; return `<g><title>Week of ${week.label}: ${week.count} orders</title><rect x="${x + 7}" y="${101 - height}" width="${slot - 14}" height="${height}" rx="3" fill="${week.count === peak ? '#258e81' : index === weeks.length - 1 ? '#314e60' : '#a4d8ce'}"/><text x="${x + slot / 2}" y="${95 - height}" text-anchor="middle" fill="#617583" font-size="10">${week.count}</text>${index % 2 === 0 || index === weeks.length - 1 ? `<text x="${x + slot / 2}" y="122" text-anchor="middle" fill="#637681" font-size="9">${week.label}</text>` : ''}</g>`; }).join('')}</svg>`;
 }
 
 function renderTable() {
@@ -49,7 +60,7 @@ function renderTable() {
   document.querySelector('#empty-orders').hidden = matches.length > 0;
   document.querySelector('.table-scroll').hidden = matches.length === 0;
   document.querySelector('#result-label').textContent = matches.length ? `Showing ${start + 1}–${Math.min(start + pageSize, matches.length)} of ${matches.length} orders` : '0 orders match your filters';
-  document.querySelector('#pagination').innerHTML = `<button type="button" data-page="${state.page - 1}" ${state.page === 1 ? 'disabled' : ''} aria-label="Previous page">‹</button>${Array.from({ length: pageCount }, (_, index) => `<button type="button" data-page="${index + 1}" ${state.page === index + 1 ? 'aria-current="page"' : ''} aria-label="Page ${index + 1}">${index + 1}</button>`).join('')}<button type="button" data-page="${state.page + 1}" ${state.page === pageCount ? 'disabled' : ''} aria-label="Next page">›</button>`;
+  document.querySelector('#pagination').innerHTML = `<button type="button" data-page="${state.page - 1}" ${state.page === 1 ? 'disabled' : ''} aria-label="Previous page">‹</button>${pageNumbers(state.page, pageCount).map(page => page === '…' ? '<span class="page-gap" aria-hidden="true">…</span>' : `<button type="button" data-page="${page}" ${state.page === page ? 'aria-current="page"' : ''} aria-label="Page ${page}">${page}</button>`).join('')}<button type="button" data-page="${state.page + 1}" ${state.page === pageCount ? 'disabled' : ''} aria-label="Next page">›</button>`;
 }
 
 function showDetails(id) {
