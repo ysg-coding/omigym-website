@@ -2,7 +2,7 @@ import { orders, reportingPeriod, pageNumbers, filterOrders, orderMetrics, weekl
 import { money, escapeHTML as esc } from './data.js';
 
 const state = { search: '', month: 'all', status: 'All', sort: 'newest', page: 1 };
-const pageSize = 8;
+const pageSize = 15;
 const dialog = document.querySelector('#order-dialog');
 const paths = {
   box: '<path d="m4 7 8-4 8 4v11l-8 4-8-4V7Zm0 0 8 4 8-4M12 11v11M8 5l8 4"/>',
