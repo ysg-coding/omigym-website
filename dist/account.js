@@ -94,8 +94,10 @@ export function initAccount() {
       password.setAttribute('aria-invalid', 'true');
       password.focus();
     } else {
-      feedback.className = 'account-feedback success';
-      feedback.textContent = 'Registration successful. Welcome to OMIGYM.';
+      feedback.className = 'account-feedback error';
+      feedback.textContent = 'Incorrect verification code. Please try again.';
+      form.elements.code.setAttribute('aria-invalid', 'true');
+      form.elements.code.focus();
     }
   });
   document.addEventListener('input', event => {
