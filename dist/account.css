@@ -23,6 +23,12 @@
 .account-form input{display:block;width:100%;border:1px solid #cdd0ca;background:#fff;border-radius:0;padding:13px 15px;font-size:16px;color:var(--black);margin-bottom:20px;min-width:0}
 .account-form input:focus{outline:2px solid var(--orange);outline-offset:1px}
 .account-form input[aria-invalid="true"]{border-color:#aa392e}
+.account-code-row{display:flex;gap:10px;align-items:stretch;margin-bottom:20px}
+.account-code-row input{flex:1;min-width:0;margin-bottom:0}
+.account-send-code{flex-shrink:0;padding:0 15px;background:var(--black);color:#fff;border:1px solid var(--black);font-size:12px;font-weight:700}
+.account-send-code:hover{background:#333}
+.account-code-status{font-size:12px;color:#28603a;line-height:1.6}
+.account-code-status:not(:empty){margin:-8px 0 20px}
 .account-feedback{font-size:13px;line-height:1.6;overflow-wrap:anywhere}
 .account-feedback:not(:empty){padding:13px 15px;margin:0 0 20px;border-left:3px solid currentColor}
 .account-feedback.error{background:#fbece9;color:#963429}
