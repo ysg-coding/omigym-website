@@ -25,7 +25,7 @@ npm start
 
 - 首页：品牌主视觉、产品分类、精选商品、品牌介绍。
 - 产品列表 `#/shop`：分类、关键词搜索、价格/名称排序、快捷加购。
-- 产品详情 `#/product/round-dumbbells`：6 款商品各自有详情，支持规格、价格、数量、图库及参数折叠。
+- 产品详情 `#/product/round-dumbbells`：21 款商品各自有详情，支持规格、价格、数量、图库及参数折叠；涵盖哑铃、训练架与凳、杠铃片、壶铃与杠铃、训练配件、收纳、有氧和套装。
 - 品牌故事 `#/about` 和联系页 `#/contact`；联系方式为虚构示例。
 - 购物车弹层及 `#/cart`：规格合并、数量修改、删除、浏览器本地保存。
 - 结算 `#/checkout`：配送表单校验、模拟运费、订单确认；无支付。
@@ -50,6 +50,7 @@ npm start
 | `dist/index.html` | 入口、导航、页脚、购物车对话框 |
 | `dist/styles.css` | 桌面与移动端样式 |
 | `dist/data.js` | 商品、规格、价格 |
+| `dist/catalog-expansion.js` | 新增 15 款商品的资料、规格和价格 |
 | `dist/pages.js` | 各页面模板 |
 | `dist/components.js` | 商品卡片、购物车、金额摘要 |
 | `dist/store.js` | 购物车和订单的纯逻辑 |

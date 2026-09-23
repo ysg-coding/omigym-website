@@ -36,3 +36,13 @@
 @media(max-width:900px){.account-art{padding:30px}.account-art-note{left:30px;font-size:8px}.account-panel{padding:40px 30px}.account-panel h1{font-size:57px}}
 @media(max-width:640px){.account-layout{grid-template-columns:1fr;min-height:0;margin-top:0}.account-art{display:none}.account-panel{padding:35px 25px}.account-panel h1{font-size:58px}.account-form{margin-top:24px}.account-dropdown{right:-42px}.header-actions{gap:3px}.header-actions .icon-button{width:35px}.header .logo{font-size:28px}}
 @media(max-width:360px){.header .logo{font-size:25px}.header-actions .icon-button{width:30px}.account-panel{padding:30px 20px}.account-form .button{font-size:13px;padding:14px 16px;gap:12px}}
+
+/* Equal hit areas keep search, account and bag centered on the same rhythm. */
+.header-actions{gap:14px}
+.header-actions .icon-button,.header-actions .bag-button{width:44px;height:44px;flex:0 0 44px;position:relative;align-items:center;justify-content:center;padding:0}
+.header-actions .bag-label{display:none}
+.header-actions .bag-count{position:absolute;right:-2px;top:0;min-width:18px;height:18px;padding:0 4px;font-size:10px;border:2px solid #fff;box-sizing:content-box}
+.header-actions svg{width:24px;height:24px}
+@media(max-width:1000px){.header-actions{gap:8px}}
+@media(max-width:640px){.header-actions{gap:4px}.header-actions .icon-button,.header-actions .bag-button{width:35px;height:44px;flex-basis:35px}.header-actions .bag-count{right:-3px;top:1px;min-width:15px;height:15px;font-size:9px;padding:0 2px}}
+@media(max-width:360px){.header-actions{gap:2px}.header-actions .icon-button,.header-actions .bag-button{width:31px;flex-basis:31px}}
