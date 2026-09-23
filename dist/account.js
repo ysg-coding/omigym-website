@@ -26,6 +26,7 @@ export const loginPage = () => accountPage(false);
 export const registerPage = () => accountPage(true);
 
 export function initAccount() {
+  const pendingRegistrations = new WeakSet();
   const account = document.querySelector('.account-menu');
   const trigger = document.querySelector('#account-trigger');
   const links = document.querySelector('#account-links');
@@ -76,10 +77,11 @@ export function initAccount() {
     form.elements.code.focus();
   });
 
-  document.addEventListener('submit', event => {
+  document.addEventListener('submit', async event => {
     const form = event.target;
     if (form.id !== 'login-form' && form.id !== 'register-form') return;
     event.preventDefault();
+    if (pendingRegistrations.has(form)) return;
     const identity = form.elements.identifier || form.elements.phone;
     const validIdentity = form.id === 'login-form' ? isAccountIdentifier(identity.value) : !identity.value.trim() || isMobileNumber(identity.value);
     identity.setCustomValidity(validIdentity ? '' : form.id === 'login-form' ? 'Enter a valid email address or mobile number.' : 'Enter a valid mobile number, including your country code for international numbers.');
@@ -94,10 +96,30 @@ export function initAccount() {
       password.setAttribute('aria-invalid', 'true');
       password.focus();
     } else {
-      feedback.className = 'account-feedback error';
-      feedback.textContent = 'Incorrect verification code. Please try again.';
-      form.elements.code.setAttribute('aria-invalid', 'true');
-      form.elements.code.focus();
+      pendingRegistrations.add(form);
+      const submitButton = form.querySelector('button[type="submit"]');
+      const buttonContent = submitButton.innerHTML;
+      const controls = [...form.querySelectorAll('input, button')].map(control => [control, control.disabled]);
+      form.setAttribute('aria-busy', 'true');
+      feedback.textContent = '';
+      feedback.className = 'account-feedback';
+      form.elements.code.removeAttribute('aria-invalid');
+      controls.forEach(([control]) => { control.disabled = true; });
+      submitButton.innerHTML = '<span>Verifying…</span><span class="account-spinner" aria-hidden="true"></span>';
+      try {
+        // Local delay only; no verification request is sent.
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        if (!form.isConnected) return;
+        feedback.className = 'account-feedback error';
+        feedback.textContent = 'Incorrect verification code. Please try again.';
+        form.elements.code.setAttribute('aria-invalid', 'true');
+      } finally {
+        controls.forEach(([control, disabled]) => { control.disabled = disabled; });
+        submitButton.innerHTML = buttonContent;
+        form.removeAttribute('aria-busy');
+        pendingRegistrations.delete(form);
+        if (form.isConnected) form.elements.code.focus();
+      }
     }
   });
   document.addEventListener('input', event => {
