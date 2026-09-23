@@ -2,6 +2,7 @@ import { products, productById, defaultVariant, money, escapeHTML as esc } from 
 import { addItem, setQuantity, sanitizeCart, totals, createOrder } from './store.js';
 import { homePage, shopPage, productPage, aboutPage, contactPage, cartPage, checkoutPage, confirmationPage, notFoundPage } from './pages.js';
 import { productCard, cartLines, emptyCart, icon, buttonLink } from './components.js';
+import { loginPage, registerPage, initAccount } from './account.js';
 
 const main = document.querySelector('#main');
 const dialog = document.querySelector('#cart-dialog');
@@ -63,6 +64,8 @@ function render({ focus = true } = {}) {
   }
   else if (path === '/about') { page = aboutPage(); title = 'Our story'; }
   else if (path === '/contact') { page = contactPage(params); title = 'Contact us'; }
+  else if (path === '/login') { page = loginPage(); title = 'Log in'; }
+  else if (path === '/register') { page = registerPage(); title = 'Create account'; }
   else if (path === '/cart') { page = cartPage(cart); title = 'Your bag'; }
   else if (path === '/checkout') { page = checkoutPage(cart); title = 'Checkout'; }
   else if (path === '/confirmation') { page = confirmationPage(lastOrder); title = 'Order confirmation'; }
@@ -251,4 +254,5 @@ if (context?.registerTool) {
     }, { signal: lifecycle.signal })).catch(() => {});
   } catch { /* Browsers without supported WebMCP continue with the normal UI. */ }
 }
+initAccount();
 render({ focus: false });
