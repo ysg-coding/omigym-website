@@ -63,7 +63,7 @@ function render({ focus = true } = {}) {
     page = p ? productPage(p) : notFoundPage(); title = p?.name || 'Product not found';
   }
   else if (path === '/about') { page = aboutPage(); title = 'Our story'; }
-  else if (path === '/contact') { page = contactPage(params); title = params.get('topic') === 'Wholesale' ? 'Wholesale inquiries' : 'Contact us'; }
+  else if (path === '/contact') { page = contactPage(params); title = 'Contact us'; }
   else if (path === '/login') { page = loginPage(); title = 'Log in'; }
   else if (path === '/register') { page = registerPage(); title = 'Create account'; }
   else if (path === '/cart') { page = cartPage(cart); title = 'Your bag'; }
@@ -73,7 +73,7 @@ function render({ focus = true } = {}) {
   main.innerHTML = page;
   document.title = `OMIGYM — ${title}`;
   document.querySelectorAll('[data-nav]').forEach(link => {
-    const active = link.dataset.nav === (path === '/' ? 'home' : path === '/contact' && params.get('topic') === 'Wholesale' ? 'wholesale' : path.startsWith('/product/') ? 'shop' : path.slice(1));
+    const active = link.dataset.nav === (path === '/' ? 'home' : path.startsWith('/product/') ? 'shop' : path.slice(1));
     if (active) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current');
   });
   if (path === '/shop') {
