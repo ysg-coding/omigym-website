@@ -9,3 +9,5 @@ Registration requires an email address and a six-digit email verification code; 
 After required-field and format validation, login always shows `Incorrect password. Please try again.` and clears the password field. The Register button always shows `Incorrect verification code. Please try again.` and marks the code field invalid. There is no account creation, credential storage, authentication session, SMS or email delivery. `dist/account.js` only changes the current DOM; no form data is sent anywhere.
 
 Verification: `npm test`; `npm run check` includes both route renderings and rejects network or browser-storage APIs in the account module. Browser checks cover repeated login attempts, registration feedback, dropdown links, Escape, keyboard access and narrow-screen layout.
+
+Registration verification waits one second locally before showing the fixed code error. During the wait, the button shows a spinner and `Verifying…`, the form is marked busy, and its controls are disabled to prevent duplicate submissions. Navigating away leaves the new page unaffected; controls are restored after completion. Reduced-motion users see a static loading indicator.
