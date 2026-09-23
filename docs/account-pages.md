@@ -4,6 +4,8 @@ Routes: `/#/login` and `/#/register`. The header avatar exposes Log in and Regis
 
 Both pages use the storefront typography, orange accents and an existing OMIGYM equipment photo. At small widths the photo is hidden so the form remains prominent.
 
-After native required-field/email validation, login always shows `Incorrect password. Please try again.` and clears the password field. Registration always shows `Registration email sent. Please check your inbox.`. There is no account creation, credential storage, authentication session or email delivery. `dist/account.js` only changes the current DOM; no form data is sent anywhere.
+Registration requires an email address and a mobile number. Login accepts either an email or a mobile number in one identifier field, plus a password. Phone input supports country codes, spaces, parentheses, dots and hyphens, with 7–15 digits; this is format validation only, not phone ownership verification.
+
+After required-field and format validation, login always shows `Incorrect password. Please try again.` and clears the password field. Registration always shows `Registration email sent. Please check your inbox.`. There is no account creation, credential storage, authentication session, SMS or email delivery. `dist/account.js` only changes the current DOM; no form data is sent anywhere.
 
 Verification: `npm test`; `npm run check` includes both route renderings and rejects network or browser-storage APIs in the account module. Browser checks cover repeated login attempts, registration feedback, dropdown links, Escape, keyboard access and narrow-screen layout.
